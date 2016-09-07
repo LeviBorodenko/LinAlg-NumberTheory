@@ -5,7 +5,6 @@ class row(object):
     """Represents a row of a matrix.
 
 
-
     """
 
     def __init__(self, lst):
