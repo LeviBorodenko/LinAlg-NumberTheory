@@ -28,7 +28,7 @@ class row(object):
     def changeVal(self, index, value):
         self.val[index] = value
 
-    def smul(self, scalar):  # Multiply every elements of the row by a scalar
+    def smul(self, scalar):  # Multiply every element of the row by a scalar
         try:
             int(scalar)
         except ValueError:
@@ -67,10 +67,10 @@ def Matrix(lst):
 
 class matrix(object):
     """Represent a Matrix
-    
+
     [description]
-	You can Add'em, Multiply'em, Inverse'em and take powers of 'em!.
-	So basically: All your heart disires!    
+        You can Add'em, Multiply'em, Inverse'em and take powers of 'em!.
+        So basically: All your heart disires!
 
     """
 
@@ -106,7 +106,7 @@ class matrix(object):
             return False
         product = []
         for Row in self.val:
-            newRow = row([0] * other.dim()[1])
+            newRow = row([0] * other.dim()[0])
             for index, factor in enumerate(Row):
                 newRow = newRow + other.val[index].smul(factor)
             product.append(newRow)
@@ -133,7 +133,7 @@ class matrix(object):
 
     def firstNonZeroEntry(self, col):
         """[summary]
-        Finds the first non-zero entry
+        Finds the first non-zero entry on or below the diagonal
         and returns its [index, Value]
 
         [description]
@@ -142,7 +142,7 @@ class matrix(object):
                 col {[int]} -- what column should be scanned
 
         Returns:
-                False -- If zero column
+                False -- If none found
                 [index, Value] -- if match found
         """
         for i in xrange(col, self.rank):
@@ -156,13 +156,14 @@ class matrix(object):
         Creates an echelon row reduced column of your matrix.
         [description]
         Basically: Gausselem + further reductions above the diagonal
+        on a single column.
         Arguments:
                 col {[int]} -- column that should be reduced
 
         Returns:
                 False -- If not reducable
-                Matrix -- if reducable then it returns a Matrix
-                                  mP such that mP * self = ReducedMatrix
+                Matrix -- if reducable [then it returns a Matrix
+                                  mP such that mP * self = ReducedMatrix]
         """
         IndexValue = self.firstNonZeroEntry(col)
         mP = Unitmatrix(self.rank)
@@ -193,7 +194,8 @@ class matrix(object):
         Returns the inverse of the matrix -- if it exists!
         [description]
         Looks for a series of elementary matrices that would
-        reduce self to identitiy or to reach a state that does not allow any further reduction.
+        reduce self to identitiy or to reach a state that does
+        not allow any further reduction.
         Returns:
                 False -- Not invertable
                 Matrix -- Inverse
@@ -235,6 +237,24 @@ def elemMatrixAdd(rank, index, target):
     return U
 
 
+def createVector(lst):
+    """[summary]
+    Instead of typing:
+            Matrix([[a], [b], [c], ...])
+    you can now just call
+            createVector([a, b, c, ...])
+    and the function will return the same as the above.
+                                    For the lazy.
+
+    Arguments:
+            lst {[list]} -- Entries of your vector
+
+    Returns:
+            1 by len(lst) Matrix
+    """
+    return Matrix([row([i]) for i in lst])
+
+
 def Unitmatrix(rank):
     mx = []
     for i in range(rank):
@@ -244,9 +264,9 @@ def Unitmatrix(rank):
 
 def main():
     a = Matrix([[1, 1, -1], [1, 2, -2], [2, -1, 2]])
-    y = Matrix([[3, 2, 15]])
+    # y = createVector([1, 2, 3])
 
-    print a + a
+    print a.inverse() * a
 
 
 if __name__ == '__main__':
