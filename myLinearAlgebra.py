@@ -32,7 +32,7 @@ class row(object):
         try:
             int(scalar)
         except ValueError:
-            print "Can only mulitply with a scalar!"
+            print "Can only multiply with a scalar!"
             return False
         lst = []
         for i in self.val:
@@ -69,8 +69,8 @@ class matrix(object):
     """Represent a Matrix
 
     [description]
-        You can Add'em, Multiply'em, Inverse'em and take powers of 'em!.
-        So basically: All your heart disires!
+        You can add'em, multiply'em, inverse'em and take powers of 'em!.
+        So basically: All your heart desires!
 
     """
 
@@ -102,7 +102,7 @@ class matrix(object):
 
     def __mul__(self, other):
         if self.dim()[0] != other.dim()[1]:
-            print "Can't mulitply those - wrong dimensions!"
+            print "Can't multiply those - wrong dimensions!"
             return False
         product = []
         for Row in self.val:
@@ -161,8 +161,8 @@ class matrix(object):
                 col {[int]} -- column that should be reduced
 
         Returns:
-                False -- If not reducable
-                Matrix -- if reducable [then it returns a Matrix
+                False -- If not reducible
+                Matrix -- if reducible [then it returns a Matrix
                                   mP such that mP * self = ReducedMatrix]
         """
         IndexValue = self.firstNonZeroEntry(col)
@@ -194,10 +194,10 @@ class matrix(object):
         Returns the inverse of the matrix -- if it exists!
         [description]
         Looks for a series of elementary matrices that would
-        reduce self to identitiy or to reach a state that does
+        reduce self to identity or to reach a state that does
         not allow any further reduction.
         Returns:
-                False -- Not invertable
+                False -- Not invertible
                 Matrix -- Inverse
         """
         mP = Unitmatrix(self.rank)
@@ -205,7 +205,7 @@ class matrix(object):
         for i in xrange(self.dim()[1]):
             temp = newMatrix.colReduceMatrix(i)
             if not temp:
-                print "Not invertable!"
+                print "Not invertible!"
                 return False
             else:
                 newMatrix = temp * newMatrix
@@ -214,12 +214,43 @@ class matrix(object):
 
 
 def elemMatrixFactor(rank, index, factor):
+    """[summary]
+    returns an elementary matrix corresponding to
+    the multiplication of the index'th row of a
+    rank x n matrix by a factor given by "factor"
+
+
+    Arguments:
+            rank {[int]} -- number of rows
+            index {[int]} -- index of the row that
+                                             will be multiplied
+            factor {[int, float, ...]} -- factor by which
+                                                                    our row will be
+                                                                    multiplied
+
+    Returns:
+            [Matrix] -- elementary matrix
+    """
     U = Unitmatrix(int(rank))
     U[index].changeVal(index, factor)
     return U
 
 
 def elemMatrixExchange(rank, index, outdex):
+    """[summary]
+    returns an elementary matrix corresponding
+    to the the row operation of exchanging two 
+    rows of a rank x n matrix
+    [description]
+
+    Arguments:
+            rank {[int]} -- number of rows
+            index {[int]} -- index of row that will be exchanged
+            outdex {[int]} -- index of the other row
+
+    Returns:
+            [martix] -- elementary matrix
+    """
     U = Unitmatrix(int(rank))
     U[index].changeVal(index, 0)
     U[index].changeVal(outdex, 1)
@@ -231,9 +262,23 @@ def elemMatrixExchange(rank, index, outdex):
 
 
 def elemMatrixAdd(rank, index, target):
+    """[summary]
+    Creates an elementary matrix that corresponds
+    to the row operation of adding the index row
+    to the target row.
+    [description]
+
+    Arguments:
+            rank {int}      -- number of rows
+            index {[int]}  -- index of the row that will be added
+            target {[int]} -- index of the row that we will add
+                                               the other row to.
+
+    Returns:
+            [matrix] -- elementary matrix
+    """
     U = Unitmatrix(int(rank))
     U[target].changeVal(index, 1)
-
     return U
 
 
@@ -256,6 +301,16 @@ def createVector(lst):
 
 
 def Unitmatrix(rank):
+    """[summary]
+    creates a rank x rank unit matrix
+    [description]
+
+    Arguments:
+            rank {int} -- side length 
+
+    Returns:
+            [matrix] -- Unit matrix
+    """
     mx = []
     for i in range(rank):
         mx.append([0] * i + [1] + [0] * (rank - i - 1))
@@ -263,10 +318,9 @@ def Unitmatrix(rank):
 
 
 def main():
-    a = Matrix([[1, 1, -1], [1, 2, -2], [2, -1, 2]])
+    a = Matrix([[1, 1, 1], [1, 1, 1], [1, 1, 1]])
     # y = createVector([1, 2, 3])
-
-    print a.inverse() * a
+    print a.inverse()
 
 
 if __name__ == '__main__':
