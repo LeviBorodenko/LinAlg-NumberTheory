@@ -12,6 +12,23 @@ class row(object):
         self.val = [Fraction(i) for i in lst]
         self.len = len(lst)
 
+    def __eq__(self, other):
+        if self.len != other.len:
+            print "Can only compare rows of equal length!"
+            return False
+        else:
+            k = 1
+            for index, value in enumerate(self.val):
+                if other.val[index] == 0:
+                    pass
+                else:
+                    k = value / other.val[index]
+                    for i, valu in enumerate(other.val):
+                        if k * valu != self.val[i]:
+                            return False
+                    else:
+                        return True
+
     def __getitem__(self, index):
         return self.val[index]
 
@@ -131,6 +148,21 @@ class matrix(object):
     def __getitem__(self, index):
         return self.val[index]
 
+    def isNotInvertible(self):
+        """[summary]
+        Checks if two rows of self are collinear
+        [description]
+        Precheck only valid for square matrices
+        Returns:
+                bool -- True/False
+        """
+        for index, value in enumerate(self.val):
+            for val in self.val[index::]:
+                if val == value:
+                    return True
+        else:
+            return False
+
     def firstNonZeroEntry(self, col):
         """[summary]
         Finds the first non-zero entry on or below the diagonal
@@ -200,6 +232,10 @@ class matrix(object):
                 False -- Not invertible
                 Matrix -- Inverse
         """
+        if self.dim()[0] == self.dim()[1]:
+            if self.isNotInvertible():
+                print "Not invertible because collinear rows exist"
+                return False
         mP = Unitmatrix(self.rank)
         newMatrix = self
         for i in xrange(self.dim()[1]):
@@ -223,10 +259,9 @@ def elemMatrixFactor(rank, index, factor):
     Arguments:
             rank {[int]} -- number of rows
             index {[int]} -- index of the row that
-                                             will be multiplied
+                                will be multiplied
             factor {[int, float, ...]} -- factor by which
-                                                                    our row will be
-                                                                    multiplied
+                                our row will be multiplied
 
     Returns:
             [Matrix] -- elementary matrix
@@ -239,7 +274,7 @@ def elemMatrixFactor(rank, index, factor):
 def elemMatrixExchange(rank, index, outdex):
     """[summary]
     returns an elementary matrix corresponding
-    to the the row operation of exchanging two 
+    to the the row operation of exchanging two
     rows of a rank x n matrix
     [description]
 
@@ -318,10 +353,9 @@ def Unitmatrix(rank):
 
 
 def main():
-    a = Matrix([[1, 1, 1], [1, 1, 1], [1, 1, 1]])
+    a = Matrix([[1, 2, 1], [3, 3, 3], [2, 2, 2]])
     # y = createVector([1, 2, 3])
     print a.inverse()
-
 
 if __name__ == '__main__':
     main()
