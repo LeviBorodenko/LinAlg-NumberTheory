@@ -33,6 +33,9 @@ class row(object):
                 Sum.append(self[index] + other[index])
             return row(Sum)
 
+    def __radd__(self, other):
+        return self + other
+
     def __sub__(self, other):
         return self + (- other)
 
@@ -76,6 +79,12 @@ class row(object):
             else:
                 return False
 
+    def __setitem__(self, key, item):
+        if type(item) in [int, float, Fraction] and type(key) == int:
+            self.val[key] = Fraction(item)
+        else:
+            print("Invalid assignment")
+
 
 class matrix(object):
     """docstring for matrix"""
@@ -107,12 +116,63 @@ class matrix(object):
     def __getitem__(self, key):
         return self.val[key]
 
+    def __len__(self):
+        return len(self.val)
+
+    def __add__(self, other):
+        if [self.n, self.m] != [other.n, other.m]:
+            print("Can only add matrices of same dimensions")
+        else:
+            return matrix([self[i] + other[i] for i in range(len(self))])
+
+    def __neg__(self):
+        return matrix([-i for i in self.val])
+
+    def __sub__(self, other):
+        return self + (- other)
+
+    def __mul__(self, other):
+        if type(other) in [int, float, Fraction]:
+            return matrix([other * i for i in self.val])
+        elif type(other) == matrix and self.m == other.n:
+            result = []
+            for i in range(self.n):
+                newRow = row([0] * other.m)
+                for j in range(self.m):
+                    newRow += self[i][j] * other[j]
+                result.append(newRow)
+            return matrix(result)
+        else:
+            print("Invalid Multiplication")
+            return None
+
+    def __rmul__(self, other):
+        if type(other) in [int, float, Fraction]:
+            return matrix([other * i for i in self.val])
+
+    def __setitem__(self, key, item):
+        if type(item) in [list, row] and type(key) == int:
+            self.val[key] = row(item)
+        else:
+            print("Invalid Assignment")
+
+    def mul(self, Row, Factor):
+        self[Row] *= Factor
+        return self
+
+
+def I(dim):
+    mx = []
+    for i in range(dim):
+        mx.append([0] * i + [1] + [0] * (dim - i - 1))
+    return matrix(mx)
+
 
 def test():
-    a = 2 * row([1, 2, 3, 4])
-    b = 4 * row([1, 2, 3, 4])
-    M = matrix([a, b])
-    print(M[0][1])
+    a = row([1, 0])
+    b = row([0, 2])
+    N = matrix([a, b]).mul(1, 2)
+    print(N)
 
 
 if __name__ == "__main__":
