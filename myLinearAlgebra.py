@@ -157,8 +157,69 @@ class matrix(object):
             print("Invalid Assignment")
 
     def mul(self, Row, Factor):
-        self[Row] *= Factor
+        self[Row] *= Fraction(Factor)
         return self
+
+    def prm(self, index, outdex):
+        temp = self[outdex]
+        self[outdex] = self[index]
+        self[index] = temp
+        return self
+
+    def add(self, index, target):
+        self[target] += self[index]
+        return self
+
+    def colReduce(self, col):
+        """returns a matrix that when
+        multiplied from the left colreduces
+        the col'th column """
+        temp = self
+        n = self.n
+        U = I(n)
+
+        for i in range(col, n):
+            if self[i][col] != 0:
+                pivot = [i, self[i][col]]
+                break
+        else:
+            return U
+
+        U = U.mul(pivot[0], 1 / pivot[1])
+        temp = U * temp
+        for i in range(n):
+            if i != pivot[0] and temp[i][col] != 0:
+                U = U.mul(pivot[0], -temp[i][col]).add(pivot[0],
+                                                       i).mul(pivot[0], -1 / temp[i][col])
+                temp = U * temp
+            U = U.prm(pivot[0], col)
+        return U
+
+    def inverse(self):
+        if self.isSquare:
+            n = self.n
+            temp = self
+            U = I(n)
+            for i in range(n):
+                U = temp.colReduce(i) * U
+                temp = temp.colReduce(i) * temp
+            return U
+
+    def __pow__(self, expo):
+        if expo == 0:
+            return I(self.n)
+        elif int(expo) != expo:
+            print("only integer exponents, please!")
+            return False
+        elif expo > 0:
+            P = self
+            A = self
+            for i in range(expo - 1):
+                P = P * A
+            return P
+        elif expo < 0:
+            temp = self.inverse()
+            return temp.__pow__(-expo)
 
 
 def I(dim):
@@ -169,11 +230,7 @@ def I(dim):
 
 
 def test():
-    a = row([1, 0])
-    b = row([0, 2])
-    N = matrix([a, b]).mul(1, 2)
-    print(N)
-
+    print matrix([[3, 0, 2], [2, 0, -2], [0, 1, 1]])**-2
 
 if __name__ == "__main__":
     test()
