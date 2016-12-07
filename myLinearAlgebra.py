@@ -1,8 +1,10 @@
-from fractions import Fraction
+from fractions import Fraction  # Needed for exact results
 
 
 class row(object):
-    """docstring for row"""
+    """A row of a matrix.
+    You can add, dot multiply and scalar multiply them
+    and two rows are equal if they are collinear."""
 
     def __init__(self, lst):
         super(row, self).__init__()
@@ -87,7 +89,19 @@ class row(object):
 
 
 class matrix(object):
-    """docstring for matrix"""
+    """[summary]
+    example: N = matrix([ [1, 2], [3, 4]])
+    N now represents a matrix object that you can perform
+    various operations on.
+    [description]
+    Initialized by a list of rows - rows being lists of numbers -
+    you can add, multiply, exponentiate, reduce them etc.
+    Have fun
+    Variables:
+        self.n - number of rows
+        self.m - number of columns
+        self.val - list containing the rows
+    """
 
     def __init__(self, lst):
         super(matrix, self).__init__()
@@ -171,9 +185,22 @@ class matrix(object):
         return self
 
     def colReduce(self, col):
-        """returns a matrix that when
-        multiplied from the left colreduces
-        the col'th column """
+        """[summary]
+        Performs extended Gaussian elimination on the
+        col'th column.
+        [description]
+        Returns a Matrix that when left multiplied with
+        self makes all entries in the col'th column
+        0 except for the entry that lies on the diagonal
+        - that one will become 1.
+        If column does not have a pivot colReduce
+        returns identity.
+        Arguments:
+            col {[int]} -- index of column to reduce
+
+        Returns:
+            [matrix] -- products of elem. ROPs
+        """
         temp = self
         n = self.n
         U = I(n)
@@ -196,7 +223,26 @@ class matrix(object):
         return U
 
     def inverse(self):
+        """[summary]
+        Returns the inverse of self.
+        [description]
+        The inverse is found using elem ROPs.
+        If no inverse exists then .inverse() is the
+        matrix that when multiplied with self gives
+        the row reduced echelon form.
+        Returns:
+            [matrix] -- inverse
+        """
         if self.isSquare:
+            n = self.n
+            temp = self
+            U = I(n)
+            for i in range(n):
+                U = temp.colReduce(i) * U
+                temp = temp.colReduce(i) * temp
+            return U
+        else:
+            print("Matrix non Square")
             n = self.n
             temp = self
             U = I(n)
@@ -221,8 +267,47 @@ class matrix(object):
             temp = self.inverse()
             return temp.__pow__(-expo)
 
+    def numbZeroRows(self):
+        temp = row([0] * self.m)
+        counter = 0
+        for i in self.val:
+            if i == temp:
+                counter += 1
+        return counter
+
+    def rank(self):
+        """[summary]
+        Gives the rank of self.
+        [description]
+        It counts the zero row in the echelon
+        form of self.
+        Returns:
+            [int] -- rank
+        """
+        return self.n - (self.inverse() * self).numbZeroRows()
+
+    def rowReduce(self):
+        """[summary]
+        Returns echelon form.
+        [description]
+        Using elem. ROPs.
+        
+        Returns:
+            [matrix] -- echelon from of self
+        """
+        return self.inverse() * self
+
 
 def I(dim):
+    """[summary]
+    Gives the dim x dim identity matrix.
+
+    Arguments:
+        dim {[int]} -- dimension
+    
+    Returns:
+        [matrix] -- identity
+    """
     mx = []
     for i in range(dim):
         mx.append([0] * i + [1] + [0] * (dim - i - 1))
@@ -230,7 +315,8 @@ def I(dim):
 
 
 def test():
-    print matrix([[3, 0, 2], [2, 0, -2], [0, 1, 1]])**-2
+    N = matrix([[1, 1, 1], [1, 2, 3], [2, 2, 1]])
+    print N.rowReduce()
 
 if __name__ == "__main__":
     test()
