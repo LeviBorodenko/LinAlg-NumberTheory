@@ -1,5 +1,5 @@
 from fractions import Fraction  # Needed for exact results
-
+import unittest
 
 class row(object):
     """A row of a matrix.
@@ -267,6 +267,20 @@ class matrix(object):
             temp = self.inverse()
             return temp.__pow__(-expo)
 
+    def __eq__(self, other):
+        if type(other) == matrix:
+            if [self.n, self.m] == [other.n, other.m]:
+                for i in range(self.n):
+                    for j in range(self.m):
+                        if self[i][j] != other[i][j]:
+                            return False
+                else:
+                    return True
+            else:
+                return False
+        else:
+            return False
+
     def numbZeroRows(self):
         temp = row([0] * self.m)
         counter = 0
@@ -279,7 +293,7 @@ class matrix(object):
         """[summary]
         Gives the rank of self.
         [description]
-        It counts the zero row in the echelon
+        It counts the zero rows in the echelon
         form of self.
         Returns:
             [int] -- rank
@@ -291,11 +305,18 @@ class matrix(object):
         Returns echelon form.
         [description]
         Using elem. ROPs.
-        
+
         Returns:
             [matrix] -- echelon from of self
         """
         return self.inverse() * self
+
+
+def vector(lst):
+    if False in [type(i) in [int, float, Fraction] for i in lst]:
+        print("Vector must be a list of numbers")
+    else:
+        return matrix([[i] for i in lst])
 
 
 def I(dim):
@@ -304,7 +325,7 @@ def I(dim):
 
     Arguments:
         dim {[int]} -- dimension
-    
+
     Returns:
         [matrix] -- identity
     """
@@ -315,8 +336,8 @@ def I(dim):
 
 
 def test():
-    N = matrix([[1, 1, 1], [1, 2, 3], [2, 2, 1]])
-    print N.rowReduce()
+    
+    print("lol")
 
 if __name__ == "__main__":
     test()
