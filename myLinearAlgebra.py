@@ -1,5 +1,15 @@
 from fractions import Fraction  # Needed for exact results
+
+# __________ Uncomment For Turbo Mode___________
+#
+# def Fraction(n):
+#     return n
+#
+# Makes computations ~150x faster but you loose infinite precision
+# ______________________________________________
+
 import unittest
+
 
 class row(object):
     """A row of a matrix.
@@ -300,6 +310,23 @@ class matrix(object):
         """
         return self.n - (self.inverse() * self).numbZeroRows()
 
+    def T(self):
+        """[summary]
+        Returns the transpose of self (self^T)
+        [description]
+        Accomplished by iterating over all elements and putting
+        and turning rows into columns and vis-a-versa.
+        Returns:
+            [matrix] -- self^T
+        """
+        result = []
+        for Col in range(self.m):
+            newRow = []
+            for Row in range(self.n):
+                newRow.append(self[Row][Col])
+            result.append(newRow)
+        return matrix(result)
+
     def rowReduce(self):
         """[summary]
         Returns echelon form.
@@ -336,8 +363,7 @@ def I(dim):
 
 
 def test():
-    
-    print("lol")
 
+    print I(10)**-10
 if __name__ == "__main__":
     test()
